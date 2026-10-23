@@ -41,7 +41,7 @@ async function openCourse(id){
   const response=await fetch(map['aula.html'],{cache:'no-store'});if(!response.ok)throw Error('No se pudo cargar el aula.');let html=await response.text();
   const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c');
   html=html.replace('/*AULA_PRIVATE_BOOT*/','window.PRIVATE_FILES='+safeJSON(map)+';window.PRIVATE_PROFILE='+safeJSON({user:user.id,name:el('greeting').textContent.replace(/^Hola, /,''),course:id})+';');
-  html=html.replaceAll('href="material-estudiante-agricultura-regenerativa.pdf"','href="'+map['material-estudiante-agricultura-regenerativa.pdf']+'"').replace('src="assets/pdf-lib.min.js"','src="'+map['assets/pdf-lib.min.js']+'"');
+  for(const [relative,url] of Object.entries(map)){html=html.replaceAll('href="'+relative+'"','href="'+url+'"').replaceAll('src="'+relative+'"','src="'+url+'"');}
   el('course-frame').srcdoc=html;el('viewer-title').textContent=course.title;el('viewer').hidden=false;activeCourse=id;status('');
  }catch(e){closeCourse();status(e.message);}finally{opening=false;}
 }
