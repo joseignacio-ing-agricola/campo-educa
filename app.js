@@ -1,7 +1,7 @@
 const el=id=>document.getElementById(id),status=message=>{el('status').textContent=message;};
-const config=window.AULA_CONFIG||{};let sb=null,user=null,courses=[],profiles=[],activeCourse=null,opening=false,isAdmin=false,renewTimer=null,renewing=false;
+const config=window.AULA_CONFIG||{};let accessExpiryTimer=null;let sb=null,user=null,courses=[],profiles=[],activeCourse=null,opening=false,isAdmin=false,renewTimer=null,renewing=false;
 function node(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;}
-function closeCourse(){clearTimeout(renewTimer);renewTimer=null;el('course-frame').srcdoc='';el('viewer').hidden=true;activeCourse=null;}
+function closeCourse(){clearTimeout(accessExpiryTimer);clearTimeout(renewTimer);renewTimer=null;el('course-frame').srcdoc='';el('viewer').hidden=true;activeCourse=null;}
 async function initialize(){
  if(!config.url||!config.publishableKey){status('Plataforma pendiente de conectar a Supabase. El encargado debe completar web/config.js y activar la configuración del servidor.');el('login-form').querySelector('button').disabled=true;return;}
  if(!/^https:\/\//.test(config.url)||config.publishableKey.startsWith('sb_secret_'))throw Error('Revisa la configuración pública.');
@@ -21,23 +21,23 @@ async function loadDashboard(){
 }
 async function loadAdmin(){
  const [{data:learners,error:lError},{data:entries,error:eError}]=await Promise.all([sb.from('learner_profiles').select('*').order('full_name'),sb.from('enrollments').select('*').order('created_at',{ascending:false})]);if(lError||eError)throw Error('No se pudo cargar la administración.');profiles=learners||[];
- el('learner-select').replaceChildren();profiles.forEach(p=>{const option=node('option',p.full_name+' · '+p.email);option.value=p.user_id;el('learner-select').append(option);});
+ el('delete-learner').replaceChildren();profiles.filter(p=>p.user_id!==user.id).forEach(p=>{const o=node('option',p.full_name+' · '+p.email);o.value=p.user_id;el('delete-learner').append(o);});el('learner-select').replaceChildren();profiles.forEach(p=>{const option=node('option',p.full_name+' · '+p.email);option.value=p.user_id;el('learner-select').append(option);});
  el('course-select').replaceChildren();el('course-options').replaceChildren();courses.forEach(c=>{const option=node('option',c.title+(c.active?'':' (inactivo)'));option.value=c.id;el('course-select').append(option);if(c.active){const label=node('label');const check=node('input');check.type='checkbox';check.name='courses';check.value=c.id;label.append(check,document.createTextNode(c.title));el('course-options').append(label);}});
- const table=node('table'),head=node('tr');['Alumno','Curso','Acceso'].forEach(t=>head.append(node('th',t)));table.append(head);(entries||[]).forEach(e=>{const tr=node('tr');[profiles.find(p=>p.user_id===e.user_id)?.full_name||e.user_id,courses.find(c=>c.id===e.course_id)?.title||e.course_id,e.active?'Habilitado':'Retirado'].forEach(t=>tr.append(node('td',t)));table.append(tr);});const wrapper=node('div');wrapper.className='table-wrap';wrapper.append(table);el('enrollments').replaceChildren(wrapper);
+ const table=node('table'),head=node('tr');['Alumno','Curso','Acceso','Vencimiento'].forEach(t=>head.append(node('th',t)));table.append(head);(entries||[]).forEach(e=>{const tr=node('tr');[profiles.find(p=>p.user_id===e.user_id)?.full_name||e.user_id,courses.find(c=>c.id===e.course_id)?.title||e.course_id,!e.active?'Retirado':e.expires_at&&new Date(e.expires_at)<=new Date()?'Vencido':'Habilitado',e.expires_at?new Date(e.expires_at).toLocaleString('es-CL'):'Sin vencimiento'].forEach(t=>tr.append(node('td',t)));table.append(tr);});const wrapper=node('div');wrapper.className='table-wrap';wrapper.append(table);el('enrollments').replaceChildren(wrapper);
  await loadAcademicAdmin();
 }
 async function adminAction(body){const {data,error}=await sb.functions.invoke('course-admin',{body});if(error){let message='No se completó la operación administrativa.';try{const detail=await error.context.json();if(detail.error)message=detail.error;}catch(_){}throw Error(message);}if(data?.error)throw Error(data.error);return data;}
 el('login-form').addEventListener('submit',async event=>{event.preventDefault();const button=event.submitter;button.disabled=true;try{if(!sb)throw Error('Falta conectar Supabase.');const {error}=await sb.auth.signInWithPassword({email:el('email').value.trim(),password:el('password').value});if(error)throw Error('No se pudo entrar. Revisa el correo y la contraseña o consulta al encargado.');el('password').value='';await loadDashboard();}catch(e){status(e.message);}finally{button.disabled=false;}});
 el('logout').addEventListener('click',async()=>{closeCourse();const {error}=await sb.auth.signOut();if(error)status('No se pudo cerrar la sesión. Intenta nuevamente.');});
-el('create-user').addEventListener('submit',async event=>{event.preventDefault();event.submitter.disabled=true;try{const ids=Array.from(el('course-options').querySelectorAll('input:checked')).map(i=>i.value);await adminAction({action:'create_user',name:el('learner-name').value,email:el('learner-email').value,password:el('learner-password').value,courses:ids});el('create-user').reset();await loadAdmin();status('Alumno registrado y cursos habilitados. Entrega sus credenciales por un medio personal.');}catch(e){status(e.message);}finally{event.submitter.disabled=false;}});
-el('access-form').addEventListener('submit',async event=>{event.preventDefault();event.submitter.disabled=true;try{await adminAction({action:'set_access',user_id:el('learner-select').value,course_id:el('course-select').value,active:el('access-active').value==='true'});await loadAdmin();status('Acceso actualizado. Los enlaces ya emitidos caducan en un máximo de 10 minutos.');}catch(e){status(e.message);}finally{event.submitter.disabled=false;}});
+el('create-user').addEventListener('submit',async event=>{event.preventDefault();event.submitter.disabled=true;try{const ids=Array.from(el('course-options').querySelectorAll('input:checked')).map(i=>i.value);await adminAction({action:'create_user',name:el('learner-name').value,email:el('learner-email').value,password:el('learner-password').value,courses:ids,...durationPayload('create-duration')});el('create-user').reset();await loadAdmin();status('Alumno registrado y cursos habilitados. Entrega sus credenciales por un medio personal.');}catch(e){status(e.message);}finally{event.submitter.disabled=false;}});
+el('access-form').addEventListener('submit',async event=>{event.preventDefault();event.submitter.disabled=true;try{await adminAction({action:'set_access',user_id:el('learner-select').value,course_id:el('course-select').value,active:el('access-active').value==='true',...durationPayload('access-duration')});await loadAdmin();status('Acceso actualizado. Los enlaces ya emitidos caducan en un máximo de 10 minutos.');}catch(e){status(e.message);}finally{event.submitter.disabled=false;}});
 el('password-form').addEventListener('submit',async event=>{event.preventDefault();event.submitter.disabled=true;try{if(el('new-password').value!==el('confirm-password').value)throw Error('Las contraseñas no coinciden.');const {error}=await sb.auth.updateUser({password:el('new-password').value});if(error)throw Error('No se cambió la contraseña. Revisa la política de contraseñas o vuelve a iniciar sesión.');el('password-form').reset();status('Contraseña actualizada.');}catch(e){status(e.message);}finally{event.submitter.disabled=false;}});
 async function openCourse(id){
  if(opening)return;opening=true;status('Consultando tu acceso y preparando el aula…');
  try{
   const {data:course,error}=await sb.from('courses').select('*').eq('id',id).eq('active',true).single();if(error||!course)throw Error('No tienes acceso activo a este curso.');
   const paths=course.files;if(!Array.isArray(paths)||!paths.includes('aula.html')||paths.some(p=>typeof p!=='string'||p.includes('..')||p.startsWith('/')))throw Error('El encargado todavía no cargó el material de este curso.');
-  const {data:signed,error:sError}=await sb.storage.from('course-materials').createSignedUrls(paths.map(p=>id+'/'+p),600);if(sError||!signed||signed.some(s=>s.error||!s.signedUrl))throw Error('No se pudo acceder al material. Puede que tu permiso haya sido retirado.');
+  const access=await courseAccess(id);const {data:signed,error:sError}=await sb.storage.from('course-materials').createSignedUrls(paths.map(p=>id+'/'+p),access.ttl);if(sError||!signed||signed.some(s=>s.error||!s.signedUrl))throw Error('No se pudo acceder al material. Puede que tu permiso haya sido retirado.');
   const map=Object.fromEntries(signed.map(s=>[s.path.slice(id.length+1),s.signedUrl]));
   const academic=await sb.rpc('campo_get_learning',{p_course:id});
   const missingAcademic=academic.error&&['PGRST202','42883'].includes(academic.error.code);
@@ -71,6 +71,12 @@ window.campoAcademic={enabled:Boolean(window.PRIVATE_LEARNING),request:function(
 }};
 
 document.addEventListener('click',function(event){
+ const fileLink=event.target.closest('a[download]');
+ if(fileLink&&!fileLink.href.startsWith('blob:')&&!fileLink.href.startsWith('data:')){
+  const raw=fileLink.getAttribute('href');
+  const path=Object.keys(window.PRIVATE_FILES).find(k=>k===raw||window.PRIVATE_FILES[k]===raw);
+  if(path){event.preventDefault();window.parent.postMessage({type:'campo-download',path},window.PRIVATE_PROFILE.parentOrigin);return;}
+ }
  const anchor=event.target.closest('a[href^="#"]');
  if(anchor){
   event.preventDefault();
@@ -85,10 +91,10 @@ document.addEventListener('click',function(event){
 });`;
   html=html.replace('/*AULA_PRIVATE_BOOT*/',()=> 'window.PRIVATE_FILES='+safeJSON(map)+';window.PRIVATE_PROFILE='+safeJSON({user:user.id,name:el('greeting').textContent.replace(/^Hola, /,''),course:id,isAdmin,parentOrigin:window.location.origin})+';window.PRIVATE_LEARNING='+safeJSON(learning)+';'+navigationBoot);
   for(const [relative,url] of Object.entries(map)){html=html.replaceAll('href="'+relative+'"','href="'+url+'"').replaceAll('src="'+relative+'"','src="'+url+'"');}
-  el('course-frame').srcdoc=html;el('viewer-title').textContent=course.title;el('viewer').hidden=false;activeCourse=id;scheduleRenewal();status('');el('viewer-access-status').textContent=learning?'Expediente sincronizado. Acceso al material con renovación automática.':'Acceso al material activo. Avance local: el seguimiento centralizado está pendiente de instalación.';
+  el('course-frame').srcdoc=html;el('viewer-title').textContent=course.title;el('viewer').hidden=false;activeCourse=id;setAccessExpiry(access.expires_at);scheduleRenewal(access.ttl);status('');el('viewer-access-status').textContent=learning?'Expediente sincronizado. Acceso al material con renovación automática.':'Acceso al material activo. Avance local: el seguimiento centralizado está pendiente de instalación.';
  }catch(e){closeCourse();status(e.message);}finally{opening=false;}
 }
-function scheduleRenewal(){clearTimeout(renewTimer);renewTimer=setTimeout(()=>{if(!activeCourse)return;if(document.hidden){scheduleRenewalSoon();return;}renewMaterial();},480000);}
+function scheduleRenewal(ttl=600){clearTimeout(renewTimer);renewTimer=setTimeout(()=>{if(!activeCourse)return;if(document.hidden){scheduleRenewalSoon();return;}renewMaterial();},Math.max(1000,(ttl-60)*1000));}
 function scheduleRenewalSoon(){clearTimeout(renewTimer);renewTimer=setTimeout(()=>{if(!document.hidden&&activeCourse)renewMaterial();else if(activeCourse)scheduleRenewalSoon();},30000);}
 async function renewMaterial(){
  if(!activeCourse||renewing)return;renewing=true;const courseId=activeCourse;
@@ -97,13 +103,13 @@ async function renewMaterial(){
   const {data:course,error}=await sb.from('courses').select('files').eq('id',courseId).eq('active',true).single();
   if(error||!course)throw Error('No se pudo confirmar tu acceso. Vuelve al catálogo e inicia sesión si es necesario.');
   if(!Array.isArray(course.files))throw Error('El material todavía no está disponible.');
-  const {data:signed,error:failed}=await sb.storage.from('course-materials').createSignedUrls(course.files.map(p=>courseId+'/'+p),600);
+  const access=await courseAccess(courseId);const {data:signed,error:failed}=await sb.storage.from('course-materials').createSignedUrls(course.files.map(p=>courseId+'/'+p),access.ttl);
   if(failed||!signed||signed.some(s=>s.error||!s.signedUrl))throw Error('No se pudo renovar el material. Revisa conexión y permiso de acceso.');
   if(activeCourse!==courseId)return;
   const files=Object.fromEntries(signed.map(s=>[s.path.slice(courseId.length+1),s.signedUrl]));
   el('course-frame').contentWindow.postMessage({type:'campo-material-refresh',files},window.location.origin);
-  el('viewer-access-status').textContent='Acceso renovado. Se conserva tu lección y tus respuestas.';scheduleRenewal();
- }catch(error){if(activeCourse===courseId){el('viewer-access-status').textContent=error.message+' Puedes volver a pulsar Renovar acceso.';scheduleRenewalSoon();}}
+  el('viewer-access-status').textContent='Acceso renovado. Se conserva tu lección y tus respuestas.';setAccessExpiry(access.expires_at);scheduleRenewal(access.ttl);
+ }catch(error){if(activeCourse===courseId){if(error.expired){closeCourse();status(error.message);}else{el('viewer-access-status').textContent=error.message+' Puedes volver a pulsar Renovar acceso.';scheduleRenewalSoon();}}}
  finally{renewing=false;}
 }
 el('close-course').addEventListener('click',closeCourse);el('renew-course').addEventListener('click',renewMaterial);
@@ -150,3 +156,38 @@ async function loadAcademicAdmin(){
  }
  const list=node('details');list.append(node('summary','Consultar folios emitidos'));const table=node('table'),head=node('tr');['Estudiante','Curso','Tipo','Folio','Fecha'].forEach(t=>head.append(node('th',t)));table.append(head);for(const c of certificates||[]){const row=node('tr');[c.name,courses.find(k=>k.id===c.course_id)?.title||c.course_id,c.kind,c.id,new Date(c.created_at).toLocaleDateString('es-CL')].forEach(t=>row.append(node('td',t)));table.append(row);}const wrap=node('div');wrap.className='table-wrap';wrap.append(table);list.append(wrap);area.append(list);
 }
+
+function durationPayload(prefix){const unit=el(prefix+'-unit').value;return {duration_unit:unit,duration_amount:unit==='unlimited'?null:Number(el(prefix+'-amount').value)};}
+['create-duration','access-duration'].forEach(prefix=>el(prefix+'-unit').addEventListener('change',()=>{const input=el(prefix+'-amount');input.disabled=el(prefix+'-unit').value==='unlimited';input.max=el(prefix+'-unit').value==='months'?'120':'3650';if(Number(input.value)>Number(input.max))input.value=input.max;}));
+el('delete-user-form').addEventListener('submit',async event=>{
+ event.preventDefault();const selected=profiles.find(p=>p.user_id===el('delete-learner').value);
+ if(!selected||el('delete-email').value.trim().toLowerCase()!==selected.email.toLowerCase()){status('Escribe exactamente el correo del alumno seleccionado.');return;}
+ if(!confirm('¿Eliminar definitivamente a '+selected.full_name+' ('+selected.email+') y todos sus registros académicos? Esta acción no se puede deshacer.'))return;
+ event.submitter.disabled=true;try{await adminAction({action:'delete_user',user_id:selected.user_id,confirm_email:selected.email});el('delete-user-form').reset();await loadAdmin();status('Cuenta y registros del alumno eliminados. Los archivos ya descargados no se pueden retirar.');}catch(e){status(e.message);}finally{event.submitter.disabled=false;}
+});
+async function courseAccess(id){
+ const {data,error}=await sb.rpc('campo_access_window',{p_course:id});
+ if(error){const e=Error('Tu acceso al curso venció o fue retirado. Consulta al encargado.');e.expired=true;throw e;}
+ return data;
+}
+function setAccessExpiry(expires){
+ clearTimeout(accessExpiryTimer);if(!expires)return;const ms=new Date(expires)-Date.now();
+ if(ms<=0){closeCourse();status('El acceso al curso ha vencido.');return;}
+ accessExpiryTimer=setTimeout(()=>{if(ms>2147480000)setAccessExpiry(expires);else{closeCourse();status('El acceso al curso ha vencido. Contacta al encargado para renovarlo.');}},Math.min(ms,2147480000));
+}
+const downloadsInFlight=new Set();
+window.addEventListener('message',async event=>{
+ if(event.source!==el('course-frame').contentWindow||event.origin!==location.origin||event.data?.type!=='campo-download'||!activeCourse)return;
+ const course=activeCourse,path=event.data.path;
+ if(typeof path!=='string'||!courses.find(c=>c.id===course)?.files.includes(path)||downloadsInFlight.has(path))return;
+ downloadsInFlight.add(path);status('Preparando descarga…');
+ try{
+  const access=await courseAccess(course);const filename=path.split('/').pop();
+  const {data,error}=await sb.storage.from('course-materials').createSignedUrl(course+'/'+path,Math.min(access.ttl,60),{download:filename});
+  if(error)throw error;const response=await fetch(data.signedUrl,{cache:'no-store'});if(!response.ok)throw Error('No se pudo descargar el archivo. Renueva tu acceso e inténtalo de nuevo.');
+  const blob=await response.blob();if(!blob.size)throw Error('El archivo está vacío. Contacta al encargado.');
+  if(path.endsWith('.pdf')&&await blob.slice(0,5).text()!=='%PDF-')throw Error('El material recibido no es un PDF válido.');
+  if(activeCourse!==course)throw Error('Abre nuevamente el curso para descargar.');
+  const url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status('Archivo preparado: '+filename+'. Revisa las descargas de tu navegador.');
+ }catch(error){status(error.message||'No se pudo descargar el material.');}finally{downloadsInFlight.delete(path);}
+});
