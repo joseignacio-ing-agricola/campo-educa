@@ -11,3 +11,6 @@ html{scroll-behavior:smooth;scroll-padding-top:25px}body{background:#fafaf4;colo
 .academic-review{margin:20px 0;padding:20px;border:1px solid #c5d2ba;border-radius:12px;background:white}.academic-review h4{margin:0 0 12px;font-size:18px}.academic-review p{white-space:pre-wrap}.teacher-review textarea{width:100%;padding:12px;border:1px solid #9eaf91;border-radius:7px;font:inherit}.teacher-review textarea:focus-visible{outline:3px solid #966d10;outline-offset:3px}
 
 .access-duration{margin:18px 0;padding:18px;border:1px solid #a9b99c;border-radius:10px}.access-duration small{display:block;max-width:65ch}.delete-account{margin-top:30px;padding:22px;border:1px solid #b97468;border-radius:12px;background:#fff8f5}.danger-button{background:#8c2e22;color:white}.danger-button:hover{background:#702218}
+
+/* Catálogo de tres cursos */
+@media(min-width:1101px){.catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.catalog-card{padding:25px}.catalog-card h3{font-size:28px}}
