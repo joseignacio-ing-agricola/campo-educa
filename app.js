@@ -40,7 +40,21 @@ async function openCourse(id){
   const map=Object.fromEntries(signed.map(s=>[s.path.slice(id.length+1),s.signedUrl]));
   const response=await fetch(map['aula.html'],{cache:'no-store'});if(!response.ok)throw Error('No se pudo cargar el aula.');let html=await response.text();
   const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c');
-  html=html.replace('/*AULA_PRIVATE_BOOT*/','window.PRIVATE_FILES='+safeJSON(map)+';window.PRIVATE_PROFILE='+safeJSON({user:user.id,name:el('greeting').textContent.replace(/^Hola, /,''),course:id})+';');
+  const navigationBoot=`
+document.addEventListener('click',function(event){
+ const anchor=event.target.closest('a[href^="#"]');
+ if(anchor){
+  event.preventDefault();
+  const hash=anchor.getAttribute('href');
+  if(location.hash!==hash)location.hash=hash;
+  else window.dispatchEvent(new Event('hashchange'));
+  return;
+ }
+ if(event.target.closest('button.lesson')){
+  queueMicrotask(function(){if(location.hash!=='#lecciones')location.hash='#lecciones';});
+ }
+});`;
+  html=html.replace('/*AULA_PRIVATE_BOOT*/',()=> 'window.PRIVATE_FILES='+safeJSON(map)+';window.PRIVATE_PROFILE='+safeJSON({user:user.id,name:el('greeting').textContent.replace(/^Hola, /,''),course:id})+';'+navigationBoot);
   for(const [relative,url] of Object.entries(map)){html=html.replaceAll('href="'+relative+'"','href="'+url+'"').replaceAll('src="'+relative+'"','src="'+url+'"');}
   el('course-frame').srcdoc=html;el('viewer-title').textContent=course.title;el('viewer').hidden=false;activeCourse=id;status('');
  }catch(e){closeCourse();status(e.message);}finally{opening=false;}
