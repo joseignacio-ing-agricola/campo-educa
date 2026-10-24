@@ -14,3 +14,6 @@ html{scroll-behavior:smooth;scroll-padding-top:25px}body{background:#fafaf4;colo
 
 /* Catálogo de tres cursos */
 @media(min-width:1101px){.catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.catalog-card{padding:25px}.catalog-card h3{font-size:28px}}
+
+/* Catálogo de cuatro cursos */
+@media(min-width:1101px){.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-card{padding:30px}}
