@@ -22,7 +22,18 @@
       "id": "huerta",
       "name": "Mi primera huerta",
       "price": 9990
+    },
+    {
+      "id": "nutricion",
+      "name": "Fertilización y nutrición vegetal práctica",
+      "price": 19990
     }
   ],
-  "bundle_price": 49990
+  "bundle_price": 49990,
+  "bundle_course_ids": [
+    "agricultura",
+    "riego",
+    "malezas",
+    "huerta"
+  ]
 }
