@@ -27,3 +27,7 @@
 .market-course .sale-banner{padding:12px 18px;gap:8px 16px;background:#efe6ce;border:0;border-radius:9px;margin:0 0 32px}.market-course .sale-banner strong{font-size:14px}.market-course .sale-banner span{font-size:12px;max-width:none}.market-course .sale-banner a{font-size:12px}
 .course-hero-action{margin-top:24px}.course-hero-price{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.1;color:#173f33;margin:0 0 8px}.course-hero-price small{font-size:13px;font-weight:400;letter-spacing:0;color:#62735c}.course-hero-terms{font-size:12px;margin:0 0 18px;color:#62735c}.course-hero-action>div{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.course-hero-action .buy-button{font-size:13px;padding:12px 16px;min-height:44px}.course-hero-program{font-size:13px;color:#315639;text-underline-offset:5px}#programa{scroll-margin-top:30px}
 @media(max-width:560px){.market-course .sale-banner span{flex-basis:100%;order:2}.market-course .sale-banner a{margin-left:auto}.course-hero-action>div{gap:16px}.course-hero-action .buy-button{flex:1;min-width:210px}.course-hero-price{font-size:29px}}
+
+/* El menú público sigue disponible cuando el formulario de ingreso se oculta. */
+.market-home:has(#login[hidden]) .landing-nav{display:flex}
+@media(max-width:800px){.market-home.market-js:has(#login[hidden]) .landing-nav:not(.is-open){display:none}}
