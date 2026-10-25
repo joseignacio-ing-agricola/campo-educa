@@ -59,6 +59,14 @@
       "price": 12495,
       "regular_price": 24990,
       "discount_percent": 50
+    },
+    {
+      "id": "qgis",
+      "course_id": "qgis-ndvi",
+      "name": "QGIS agrícola y NDVI con imágenes satelitales",
+      "price": 14995,
+      "regular_price": 29990,
+      "discount_percent": 50
     }
   ],
   "bundle_price": 24995,
