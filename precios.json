@@ -51,6 +51,14 @@
       "price": 12495,
       "regular_price": 24990,
       "discount_percent": 50
+    },
+    {
+      "id": "paltos",
+      "course_id": "cultivo-paltos",
+      "name": "Cultivo y manejo técnico del palto",
+      "price": 12495,
+      "regular_price": 24990,
+      "discount_percent": 50
     }
   ],
   "bundle_price": 24995,
