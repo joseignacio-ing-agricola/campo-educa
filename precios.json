@@ -6,40 +6,54 @@
     {
       "id": "agricultura",
       "name": "Agricultura regenerativa",
-      "price": 14990
+      "price": 7495,
+      "regular_price": 14990,
+      "discount_percent": 50
     },
     {
       "id": "riego",
       "name": "Riego agrícola",
-      "price": 19990
+      "price": 9995,
+      "regular_price": 19990,
+      "discount_percent": 50
     },
     {
       "id": "malezas",
       "name": "Malezas de Chile",
-      "price": 14990
+      "price": 7495,
+      "regular_price": 14990,
+      "discount_percent": 50
     },
     {
       "id": "huerta",
       "name": "Mi primera huerta",
-      "price": 9990
+      "price": 4995,
+      "regular_price": 9990,
+      "discount_percent": 50
     },
     {
       "id": "nutricion",
       "name": "Fertilización y nutrición vegetal práctica",
-      "price": 19990
+      "price": 9995,
+      "regular_price": 19990,
+      "discount_percent": 50
     },
     {
       "id": "poda",
       "name": "Poda e injertos de frutales",
-      "price": 19990
+      "price": 9995,
+      "regular_price": 19990,
+      "discount_percent": 50
     },
     {
       "id": "goteo",
       "name": "Instalación y mantención del riego por goteo",
-      "price": 24990
+      "price": 12495,
+      "regular_price": 24990,
+      "discount_percent": 50
     }
   ],
-  "bundle_price": 49990,
+  "bundle_price": 24995,
   "bundle_course_ids": [
     "agricultura",
     "riego",
@@ -54,7 +68,9 @@
         "huerta",
         "agricultura"
       ],
-      "price": 19990
+      "price": 9995,
+      "regular_price": 19990,
+      "discount_percent": 50
     },
     {
       "id": "riego-goteo",
@@ -63,7 +79,9 @@
         "riego",
         "goteo"
       ],
-      "price": 34990
+      "price": 17495,
+      "regular_price": 34990,
+      "discount_percent": 50
     },
     {
       "id": "nutricion-poda",
@@ -72,7 +90,18 @@
         "nutricion",
         "poda"
       ],
-      "price": 29990
+      "price": 14995,
+      "regular_price": 29990,
+      "discount_percent": 50
     }
-  ]
+  ],
+  "bundle_regular_price": 49990,
+  "promotion": {
+    "discount_percent": 50,
+    "scope": "courses_and_packs",
+    "start_date": "2026-10-24",
+    "end_date": null,
+    "payment": "one_time",
+    "access_months": 6
+  }
 }
