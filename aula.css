@@ -24,3 +24,6 @@ html{scroll-behavior:smooth;scroll-padding-top:25px}body{background:#fafaf4;colo
 
 /* Quinto curso: énfasis sin cambiar la lectura del catálogo */
 .catalog-nutrition{border-top:5px solid #33766e}.catalog-nutrition .eyebrow{color:#286257}@media(min-width:1101px){.catalog-nutrition{grid-column:1 / -1}.catalog-nutrition .catalog-resources{columns:2;column-gap:36px}.catalog-nutrition .catalog-resources li{break-inside:avoid}.catalog-nutrition .course-offer{max-width:540px}}
+
+/* Cursos prácticos de poda y goteo */
+.catalog-poda{border-top:5px solid #8B5C36}.catalog-poda .eyebrow{color:#765035}.catalog-goteo{border-top:5px solid #157C9E}.catalog-goteo .eyebrow{color:#12627e}

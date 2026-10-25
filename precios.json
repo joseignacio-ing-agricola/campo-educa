@@ -27,6 +27,16 @@
       "id": "nutricion",
       "name": "Fertilización y nutrición vegetal práctica",
       "price": 19990
+    },
+    {
+      "id": "poda",
+      "name": "Poda e injertos de frutales",
+      "price": 19990
+    },
+    {
+      "id": "goteo",
+      "name": "Instalación y mantención del riego por goteo",
+      "price": 24990
     }
   ],
   "bundle_price": 49990,
