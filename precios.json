@@ -45,5 +45,34 @@
     "riego",
     "malezas",
     "huerta"
+  ],
+  "packs": [
+    {
+      "id": "huerta-agricultura",
+      "name": "Huerta y suelo",
+      "courses": [
+        "huerta",
+        "agricultura"
+      ],
+      "price": 19990
+    },
+    {
+      "id": "riego-goteo",
+      "name": "Riego en práctica",
+      "courses": [
+        "riego",
+        "goteo"
+      ],
+      "price": 34990
+    },
+    {
+      "id": "nutricion-poda",
+      "name": "Cuidado de frutales",
+      "courses": [
+        "nutricion",
+        "poda"
+      ],
+      "price": 29990
+    }
   ]
 }
