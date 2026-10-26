@@ -67,6 +67,15 @@
       "price": 14995,
       "regular_price": 29990,
       "discount_percent": 50
+    },
+    {
+      "id": "hidroponia",
+      "course_id": "hidroponia-practica",
+      "name": "Hidroponía práctica: instala y maneja tu primer sistema",
+      "price": 9990,
+      "regular_price": 9990,
+      "discount_percent": 0,
+      "launch_price": true
     }
   ],
   "bundle_price": 24995,
