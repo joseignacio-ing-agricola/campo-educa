@@ -12,4 +12,8 @@
  for(const button of filters)button.addEventListener('click',()=>{active=button.dataset.filter;render();});input.addEventListener('input',render);
  for(const link of document.querySelectorAll('[data-set-category]'))link.addEventListener('click',()=>{active=link.dataset.setCategory;input.value='';render();});
  document.getElementById('course-reset')?.addEventListener('click',()=>{active='all';input.value='';render();input.focus();});render();
+
+ // Las opiniones solo se muestran cuando el encargado aporta textos reales autorizados.
+ const opinionSection=document.getElementById('testimonios'),opinionList=document.getElementById('student-opinions-list');
+ if(opinionSection&&opinionList){fetch('testimonios.json?v=1',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('No disponible');return r.json();}).then(data=>{const reviews=Array.isArray(data.opiniones)?data.opiniones.filter(r=>r.consentimiento===true&&['nombre','curso','texto'].every(k=>typeof r[k]==='string'&&r[k].trim())):[];for(const r of reviews){const article=document.createElement('article');article.className='student-opinion';const quote=document.createElement('blockquote');quote.textContent=r.texto.trim();const author=document.createElement('p'),name=document.createElement('strong');name.textContent=r.nombre.trim();author.append(name,document.createElement('br'),document.createTextNode(r.curso.trim()));article.append(quote,author);opinionList.append(article);}opinionSection.hidden=reviews.length===0;}).catch(()=>{opinionSection.hidden=true;});}
 })();
