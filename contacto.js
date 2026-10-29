@@ -1,10 +1,10 @@
 /* Edita aquí los enlaces de tus redes cuando estén disponibles. No uses claves ni contraseñas. */
 window.CAMPO_CONTACTO = {
- telefono: '+56971505118',
- telefonoVisible: '+56 9 7150 5118',
+ telefono: '+56977884978',
+ telefonoVisible: '+56 9 7788 4978',
  correo: '',
  redes: [
-  {nombre:'Instagram',enlace:''},
+  {nombre:'Instagram · @campoeducacursos',enlace:'https://www.instagram.com/campoeducacursos/'},
   {nombre:'Facebook',enlace:''},
   {nombre:'YouTube',enlace:''}
  ]
