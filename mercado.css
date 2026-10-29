@@ -122,3 +122,21 @@
 .market-home :is(a,button,input,summary,select,textarea):focus-visible,.market-course :is(a,button,input,summary,select,textarea):focus-visible{outline:3px solid var(--water);outline-offset:4px}
 .market-home footer :is(a,button):focus-visible,.market-course footer :is(a,button):focus-visible{outline-color:var(--gold)}
 @media(forced-colors:active){.market-home .buy-button,.market-course .buy-button{border:2px solid ButtonText}.market-home .course-filters button[aria-pressed=true]{border:3px solid Highlight}}
+
+/* Imágenes del encargado: conservar el rostro y el detalle del emisor. */
+.market-home .teacher-avatar img,.market-course .teacher-avatar img{object-position:50% 28%}
+.market-home .teacher-avatar img{height:auto;aspect-ratio:4/5;max-height:none}
+.market-course .teacher-avatar img{height:auto;aspect-ratio:4/5;max-height:300px}
+.market-home #curso-goteo .course-visual img{object-position:50% 76%}
+.market-course .course-cover .field-goteo{aspect-ratio:4/5;max-height:560px;object-position:50% 62%}
+.field-observation{margin:50px 0;padding:30px 0;border-top:1px solid var(--line)}
+.field-observation>p{max-width:74ch;color:var(--muted);line-height:1.7}
+.field-observation h2{margin:12px 0 18px}
+.field-observation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:28px}
+.field-observation figure{margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.field-observation img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+.field-observation figcaption{padding:20px}
+.field-observation figcaption strong{display:block;color:var(--forest);font-size:20px;margin-bottom:9px}
+.field-observation figcaption span{font-size:14px;line-height:1.7;color:var(--muted)}
+.field-observation .field-image-note{font-size:12px;margin-top:18px}
+@media(max-width:700px){.field-observation-grid{grid-template-columns:1fr}.field-observation figure{max-width:440px}.field-observation{margin:30px 0}}
