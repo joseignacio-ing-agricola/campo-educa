@@ -76,6 +76,15 @@
       "regular_price": 9990,
       "discount_percent": 0,
       "launch_price": true
+    },
+    {
+      "id": "floricultura",
+      "course_id": "floricultura-practica",
+      "name": "Floricultura práctica: producción y manejo de flores de corte",
+      "price": 9990,
+      "regular_price": 9990,
+      "discount_percent": 0,
+      "launch_price": true
     }
   ],
   "bundle_price": 24995,
