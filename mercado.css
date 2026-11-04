@@ -140,3 +140,9 @@
 .field-observation figcaption span{font-size:14px;line-height:1.7;color:var(--muted)}
 .field-observation .field-image-note{font-size:12px;margin-top:18px}
 @media(max-width:700px){.field-observation-grid{grid-template-columns:1fr}.field-observation figure{max-width:440px}.field-observation{margin:30px 0}}
+
+/* Optimización de controles y navegación, noviembre de 2026. */
+.course-search-clear{margin-top:8px;padding:8px 10px;min-height:44px;font:inherit;font-size:13px;border:1px solid var(--line,#bdcfbc);border-radius:8px;background:#fff;color:var(--forest,#244737);cursor:pointer}
+.course-search-clear[hidden]{display:none}.market-home .course-filters button,.market-home .nav-toggle{min-height:44px}.market-home button:focus-visible,.market-home input:focus-visible{outline:3px solid #b18220;outline-offset:3px}.market-home [id^="curso-"]{scroll-margin-top:22px}.market-home .catalog-card{min-width:0}.market-home #course-results{min-height:1.5em}
+@media(max-width:640px){.market-home .course-search input,.market-home .login-panel input{font-size:16px}.market-home .landing-nav a{min-height:44px;display:inline-flex;align-items:center}.market-home .course-search-clear{width:100%}}
+@media(prefers-reduced-motion:reduce){.market-home *,.market-course *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
