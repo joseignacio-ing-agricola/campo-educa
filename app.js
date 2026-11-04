@@ -1,3 +1,4 @@
+import {illustrationEngine} from './ilustraciones.js?v=20261104';
 const el=id=>document.getElementById(id),status=message=>{el('status').textContent=message;};
 const config=window.AULA_CONFIG||{};let accessExpiryTimer=null;let sb=null,user=null,courses=[],profiles=[],activeCourse=null,opening=false,isAdmin=false,renewTimer=null,renewing=false;
 function node(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;}
@@ -53,6 +54,7 @@ async function openCourse(id){
    if(archived){if(!localStorage.getItem(archivePrefix+'campo-legacy-history-v1'))localStorage.setItem(archivePrefix+'campo-legacy-history-v1',archived);learning.records['campo-legacy-history-v1']=archived;}
    learning.records['agro-exam-history-v1']=JSON.stringify(learning.attempts);
   }
+  html=html.replace('if(window.courseNarrator)window.courseNarrator.refresh();','if(window.courseNarrator)window.courseNarrator.refresh(); window.campoDrawings?.render(learningPresentations[currentPresentationIndex], learningPresentations[currentPresentationIndex].slides[currentSlideIndex], currentSlideIndex, currentPresentationIndex);');
   const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c');
   const navigationBoot=`
 window.addEventListener('message',function(event){
@@ -89,7 +91,7 @@ document.addEventListener('click',function(event){
   queueMicrotask(function(){if(location.hash!=='#lecciones')location.hash='#lecciones';});
  }
 });`;
-  html=html.replace('/*AULA_PRIVATE_BOOT*/',()=> 'window.PRIVATE_FILES='+safeJSON(map)+';window.PRIVATE_PROFILE='+safeJSON({user:user.id,name:el('greeting').textContent.replace(/^Hola, /,''),course:id,isAdmin,parentOrigin:window.location.origin})+';window.PRIVATE_LEARNING='+safeJSON(learning)+';'+navigationBoot);
+  html=html.replace('/*AULA_PRIVATE_BOOT*/',()=> 'window.PRIVATE_FILES='+safeJSON(map)+';window.PRIVATE_PROFILE='+safeJSON({user:user.id,name:el('greeting').textContent.replace(/^Hola, /,''),course:id,isAdmin,parentOrigin:window.location.origin})+';window.PRIVATE_LEARNING='+safeJSON(learning)+';'+navigationBoot+';('+illustrationEngine.toString()+')().install();');
   for(const [relative,url] of Object.entries(map)){html=html.replaceAll('href="'+relative+'"','href="'+url+'"').replaceAll('src="'+relative+'"','src="'+url+'"');}
   el('course-frame').srcdoc=html;el('viewer-title').textContent=course.title;el('viewer').hidden=false;activeCourse=id;setAccessExpiry(access.expires_at);scheduleRenewal(access.ttl);status('');el('viewer-access-status').textContent=learning?'Expediente sincronizado. Acceso al material con renovación automática.':'Acceso al material activo. Avance local: el seguimiento centralizado está pendiente de instalación.';
  }catch(e){closeCourse();status(e.message);}finally{opening=false;}
