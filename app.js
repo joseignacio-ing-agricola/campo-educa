@@ -1,4 +1,4 @@
-import {illustrationEngine} from './ilustraciones.js?v=integradas-20261104';
+import {illustrationEngine} from './ilustraciones.js?v=nativas-v6-20261104';
 const el=id=>document.getElementById(id),status=message=>{el('status').textContent=message;};
 const config=window.AULA_CONFIG||{};let accessExpiryTimer=null;let sb=null,user=null,courses=[],profiles=[],activeCourse=null,opening=false,isAdmin=false,renewTimer=null,renewing=false;
 function node(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;}
