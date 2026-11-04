@@ -31,17 +31,19 @@ export function illustrationEngine(){
  ciclo:['Seguimiento del desarrollo vegetal','Establecimiento','Crecimiento','Estado reproductivo']
  };
  const rules=[
- ['ndvi',/ndvi|infrarrojo|banda roja|indice espectral/],['satelite',/satelit|sentinel|teledeteccion|reflectancia/],['mapa',/qgis|cartograf|raster|vectorial|georrefer|coordenad|sistema de referencia|capa|geoproceso/],
- ['injerto',/injert|portainjert|patron y|cambium|pua/],['poda',/poda|corte|piton|cargador|herramientas de corte/],['filtro',/filtr|cabezal|obtur|presion|manomet|perdida de carga/],['goteo',/goteo|emisor|gotero|lateral|uniformidad|caudal|tuberia|sectorizacion/],
+ ['ndvi',/ndvi|infrarrojo|banda roja|indice espectral/],['satelite',/satelit|sentinel|teledeteccion|reflectancia/],['mapa',/qgis|cartograf|raster|vectorial|georrefer|coordenad|sistema de referencia|\bcapas?\b|geoproceso/],
+ ['injerto',/injert|portainjert|patron y|cambium|pua/],['poda',/poda|\bcortes?\b|piton|cargador|herramientas de corte/],['filtro',/filtr|cabezal|obtur|\bpresion|manomet|perdida de carga/],['goteo',/goteo|emisor|gotero|lateral|uniformidad|caudal|tuberia|sectorizacion/],
  ['ph',/\bph\b|conductividad|electrodo|salinidad|\bce\b/],['muestreo',/muestreo|muestra|calicata|representativ|monitoreo|diagnostico/],['compost',/compost|residuo|materia organica|lombr|mineralizacion/],['nutricion',/nutri|fertiliz|nitrogen|fosfor|potasio|deficiencia|dosis|abon/],
  ['plaga',/plaga|enfermed|sanidad|sanitari|patogeno|botrytis|lobesia|oidi|mildiu|fitosan|control biologico/],['cosecha',/cosecha|vendimia|poscosecha|postcosecha|madurez|brix|recoleccion|logistica/],['costos',/costo|presupuesto|rentab|margen|precio|comercial|venta|econom/],
  ['registro',/fuentes|referencias|bibliograf|trazabilidad|bitacora|portafolio|registro|proyecto|plan de accion|evidencia|evaluacion|aprendido|repaso/],['canopia',/canopia|follaje|microclima|desbrote|deshoje|luz|radiacion|fotoperiod/],['raices',/raiz|raices|radical|radicular/],
- ['suelo',/suelo|textura|estructura|horizonte|compactacion|drenaje|erosion|cobertura/],['riego',/riego|agua|hidric|evapotranspir|lamina|balance|humedad/],['semilla',/semilla|siembra|almacigo|germin|plantula|trasplante|propagacion|plantacion/],['ciclo',/fenolog|ciclo|floracion|cuaja|envero|crecimiento|grados dia/],
- ['hidro',/hidropon|recircul|nft|raiz flotante|solucion nutritiva/],['maleza',/maleza|herbicid|identificacion|gramine|latifoli/],['flor',/flor|petalo|ornamental|bulbo|ramo/],['vid',/vid|vinifer|vino|vinedo|cepa|uva|racimo/],['palto',/palto|palta|frutal|arbol|copa/]
+ ['suelo',/suelo|textura|estructura del suelo|horizonte|compactacion|drenaje|erosion|cobertura/],['riego',/riego|agua|hidric|evapotranspir|lamina|balance|humedad/],['semilla',/semilla|siembra|almacigo|germin|plantula|trasplante|propagacion|plantacion/],['ciclo',/fenolog|ciclo|floracion|cuaja|envero|crecimiento|grados dia/],
+ ['hidro',/hidropon|recircul|nft|raiz flotante|solucion nutritiva/],['maleza',/maleza|herbicid|identificacion|gramine|latifoli/],['flor',/flor|petalo|ornamental|bulbo|ramo/],['vid',/\bvid\b|vinifer|\bvino\b|vinedo|cepa|\buva|racimo/],['palto',/palto|palta|frutal|arbol|copa/]
  ];
  const defaults={'agricultura-regenerativa':'suelo','riego-agricola':'riego','malezas-chile':'maleza','mi-primera-huerta':'semilla','fertilizacion-nutricion':'nutricion','poda-injertos':'poda','goteo-instalacion':'goteo','cultivo-paltos':'palto','qgis-ndvi':'mapa','hidroponia-practica':'hidro','floricultura-practica':'flor','viticultura-uva-vino':'vid'};
  function select(deck,slide){
   const title=norm(slide.title),topic=norm(deck.title),body=norm((slide.paragraphs||[]).join(' '));
+  if(deck.course==='qgis-ndvi'){if(/ndvi|infrarrojo|banda roja/.test(title))return 'ndvi';if(/satelit|sentinel|teledeteccion|reflectancia/.test(title))return 'satelite';if(/muestreo|muestra|terreno/.test(title))return 'muestreo';return 'mapa';}
+  if(deck.course==='floricultura-practica'&&/flor.*corte/.test(title))return 'flor';
   let match=rules.find(([,r])=>r.test(title));if(match)return match[0];
   match=rules.find(([,r])=>r.test(topic));if(match)return match[0];
   match=rules.find(([,r])=>r.test(body));return match?.[0]||defaults[deck.course]||'registro';
