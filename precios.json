@@ -146,5 +146,18 @@
     "end_date": null,
     "payment": "one_time",
     "access_months": 6
+  },
+  "student_promotion": {
+    "code": "ESTUDIANTE20",
+    "discount_percent": 20,
+    "basis": "published_individual_course_price",
+    "eligibility": "Estudiante con matrícula vigente; validación manual antes del pago.",
+    "exclusions": [
+      "packs",
+      "compras anteriores"
+    ],
+    "access_months": 6,
+    "start_date": "2026-11-05",
+    "end_date": null
   }
 }
