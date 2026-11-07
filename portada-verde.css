@@ -1,0 +1,85 @@
+/* Paleta de la portada de CAMPO EDUCA */
+.market-home {
+  --forest: #123b26;
+  --leaf: #356b48;
+  --cream: #f5faf3;
+  --ink: #1c3829;
+  --muted: #486153;
+  --sage: #e7f3e8;
+  --line: #c6dccb;
+  --fern: #23643d;
+  --fern-hover: #194d30;
+  --mint: #d8efdf;
+  --sprout: #dcedb5;
+  --paper: #fcfffc;
+  --focus: #36794d;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.market-home header { background: var(--cream); }
+.market-home .market-hero h1 em { color: var(--leaf); }
+.market-home .market-hero-photo figcaption {
+  background: var(--paper);
+  border-left-color: var(--fern);
+}
+.market-home .market-hero-photo figcaption span,
+.market-home .market-start-price,
+.market-home .market-teacher-mini strong,
+.market-home .market-benefits p { color: var(--muted); }
+.market-home .benefit-number { color: var(--leaf); }
+
+.market-home .sale-banner,
+.market-home :is(.course-discount, .discount-badge) {
+  background: var(--sprout);
+  color: var(--forest);
+  border-color: #a6c683;
+}
+.market-home .sale-banner a { color: var(--forest); }
+
+.market-home :is(.buy-button, .student-primary) {
+  background: var(--fern);
+  border-color: var(--fern);
+  color: #fff;
+  box-shadow: 0 3px 0 #123b261a;
+}
+.market-home :is(.buy-button, .student-primary):is(:hover, :active) {
+  background: var(--fern-hover);
+  border-color: var(--fern-hover);
+}
+.market-home .landing-nav .nav-access,
+.market-home .student-secondary { color: var(--forest); border-color: var(--leaf); }
+.market-home .landing-nav .nav-access:hover,
+.market-home .student-secondary:hover { background: var(--mint); }
+
+.market-home .market-paths > a,
+.market-home :is(.starter-trial, .sample-section, .other-offers, .student-promo),
+.market-home .related-packs .three-grid > article {
+  background: var(--sage);
+  border-color: var(--line);
+}
+.market-home .market-paths > a:nth-of-type(2) { background: var(--mint); border-color: var(--line); }
+.market-home .market-paths > a:nth-of-type(3) { background: #edf5d9; border-color: var(--line); }
+.market-home .market-paths > a:hover { border-color: var(--leaf); }
+.market-home :is(.catalog-card, .starter-preview, .starter-exercise, .student-how, .field-observation figure) {
+  background: var(--paper);
+  border-color: var(--line);
+}
+.market-home .catalog-card:hover { border-color: var(--leaf); }
+.market-home .catalog-card .course-family {
+  background: var(--sage);
+  border-color: var(--line);
+  color: var(--forest);
+}
+.market-home :is(#curso-riego, #curso-goteo, #curso-hidroponia) .course-family { background: var(--mint); color: var(--forest); }
+.market-home :is(#curso-poda, #curso-paltos) .course-family { background: #edf5d9; color: var(--forest); }
+.market-home .access-details > summary { background: var(--mint); color: var(--forest); }
+.market-home .course-filters button[aria-pressed="true"] { background: var(--fern); border-color: var(--fern); color: #fff; }
+
+.market-home footer { background: var(--forest); border-color: var(--forest); color: var(--cream); }
+.market-home footer .social-placeholder { background: var(--fern-hover); border-color: #8fbc9e; }
+.market-home :is(a, button, input, summary, select, textarea):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+.market-home footer :is(a, button):focus-visible { outline-color: var(--sprout); }
