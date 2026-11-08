@@ -103,6 +103,15 @@
       "regular_price": 9990,
       "discount_percent": 0,
       "launch_price": true
+    },
+    {
+      "id": "maquinaria",
+      "course_id": "maquinaria-agricola",
+      "name": "Maquinaria agrícola: del suelo a la cosecha",
+      "price": 9990,
+      "regular_price": 9990,
+      "discount_percent": 0,
+      "launch_price": true
     }
   ],
   "bundle_price": 24995,
