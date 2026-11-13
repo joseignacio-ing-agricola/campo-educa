@@ -217,7 +217,7 @@
       render();
     }
   });
-  fetch('precios.json', {cache: 'no-cache'})
+  fetch('precios.json?v=20261113', {cache: 'no-cache'})
     .then(response => {
       if (!response.ok) throw Error('Catálogo no disponible');
       return response.json();

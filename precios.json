@@ -6,112 +6,107 @@
     {
       "id": "agricultura",
       "name": "Agricultura regenerativa",
-      "price": 7495,
-      "regular_price": 14990,
-      "discount_percent": 50
+      "price": 10990,
+      "regular_price": 10990,
+      "discount_percent": 0
     },
     {
       "id": "riego",
       "name": "Riego agrícola",
-      "price": 9995,
-      "regular_price": 19990,
-      "discount_percent": 50
+      "price": 12990,
+      "regular_price": 12990,
+      "discount_percent": 0
     },
     {
       "id": "malezas",
       "name": "Malezas de Chile",
-      "price": 7495,
-      "regular_price": 14990,
-      "discount_percent": 50
+      "price": 10990,
+      "regular_price": 10990,
+      "discount_percent": 0
     },
     {
       "id": "huerta",
       "name": "Mi primera huerta",
-      "price": 4995,
-      "regular_price": 9990,
-      "discount_percent": 50
+      "price": 7990,
+      "regular_price": 7990,
+      "discount_percent": 0
     },
     {
       "id": "nutricion",
       "name": "Fertilización y nutrición vegetal práctica",
-      "price": 9995,
-      "regular_price": 19990,
-      "discount_percent": 50
+      "price": 14990,
+      "regular_price": 14990,
+      "discount_percent": 0
     },
     {
       "id": "poda",
       "name": "Poda e injertos de frutales",
-      "price": 9995,
-      "regular_price": 19990,
-      "discount_percent": 50
+      "price": 14990,
+      "regular_price": 14990,
+      "discount_percent": 0
     },
     {
       "id": "goteo",
       "name": "Instalación y mantención del riego por goteo",
-      "price": 12495,
-      "regular_price": 24990,
-      "discount_percent": 50
+      "price": 16990,
+      "regular_price": 16990,
+      "discount_percent": 0
     },
     {
       "id": "paltos",
       "course_id": "cultivo-paltos",
       "name": "Cultivo y manejo técnico del palto",
-      "price": 12495,
-      "regular_price": 24990,
-      "discount_percent": 50
+      "price": 17990,
+      "regular_price": 17990,
+      "discount_percent": 0
     },
     {
       "id": "qgis",
       "course_id": "qgis-ndvi",
       "name": "QGIS agrícola y NDVI con imágenes satelitales",
-      "price": 14995,
-      "regular_price": 29990,
-      "discount_percent": 50
+      "price": 24990,
+      "regular_price": 24990,
+      "discount_percent": 0
     },
     {
       "id": "hidroponia",
       "course_id": "hidroponia-practica",
       "name": "Hidroponía práctica: instala y maneja tu primer sistema",
-      "price": 9990,
-      "regular_price": 9990,
-      "discount_percent": 0,
-      "launch_price": true
+      "price": 16990,
+      "regular_price": 16990,
+      "discount_percent": 0
     },
     {
       "id": "floricultura",
       "course_id": "floricultura-practica",
       "name": "Floricultura práctica: producción y manejo de flores de corte",
-      "price": 9990,
-      "regular_price": 9990,
-      "discount_percent": 0,
-      "launch_price": true
+      "price": 12990,
+      "regular_price": 12990,
+      "discount_percent": 0
     },
     {
       "id": "viticultura",
       "course_id": "viticultura-uva-vino",
       "name": "Uva de vino: viticultura y manejo del viñedo",
-      "price": 9990,
-      "regular_price": 9990,
-      "discount_percent": 0,
-      "launch_price": true
+      "price": 16990,
+      "regular_price": 16990,
+      "discount_percent": 0
     },
     {
       "id": "cerezo",
       "course_id": "cerezo-manejo-productivo",
       "name": "Cerezo y manejo productivo",
-      "price": 9990,
-      "regular_price": 9990,
-      "discount_percent": 0,
-      "launch_price": true
+      "price": 17990,
+      "regular_price": 17990,
+      "discount_percent": 0
     },
     {
       "id": "maquinaria",
       "course_id": "maquinaria-agricola",
       "name": "Maquinaria agrícola: del suelo a la cosecha",
-      "price": 9990,
-      "regular_price": 9990,
-      "discount_percent": 0,
-      "launch_price": true
+      "price": 19990,
+      "regular_price": 19990,
+      "discount_percent": 0
     }
   ],
   "bundle_price": 24995,
@@ -130,8 +125,8 @@
         "agricultura"
       ],
       "price": 9995,
-      "regular_price": 19990,
-      "discount_percent": 50
+      "regular_price": 18980,
+      "discount_percent": 47
     },
     {
       "id": "riego-goteo",
@@ -141,8 +136,8 @@
         "goteo"
       ],
       "price": 17495,
-      "regular_price": 34990,
-      "discount_percent": 50
+      "regular_price": 29980,
+      "discount_percent": 42
     },
     {
       "id": "nutricion-poda",
@@ -152,15 +147,15 @@
         "poda"
       ],
       "price": 14995,
-      "regular_price": 29990,
+      "regular_price": 29980,
       "discount_percent": 50
     }
   ],
-  "bundle_regular_price": 49990,
+  "bundle_regular_price": 42960,
   "promotion": {
-    "discount_percent": 50,
-    "scope": "courses_and_packs",
-    "start_date": "2026-10-24",
+    "discount_percent": 0,
+    "scope": "published_prices",
+    "start_date": "2026-11-13",
     "end_date": null,
     "payment": "one_time",
     "access_months": 6
