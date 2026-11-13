@@ -13,10 +13,13 @@
   const money = amount => '$' + format.format(amount);
   const items = byId('cart-items');
   const checkout = byId('cart-checkout');
+  const student = byId('cart-student');
   const status = byId('cart-status');
   let selected = [];
   let contact;
   let months;
+  let promotion;
+  const studentPrice = product => Math.round(product.price * (100 - promotion.discount_percent) / 100);
 
   function announce(message) {
     status.textContent = message;
@@ -93,6 +96,11 @@
       '',
       'Total estimado: ' + money(total) + ' CLP.',
       months + ' meses de acceso desde la activación.',
+      ...(student.checked ? [
+        'Solicito validar ' + promotion.code + ' por mi matrícula vigente.',
+        'Estimado si se valida: ' + money(order.reduce((sum, product) =>
+          sum + (product.isPack ? product.price : studentPrice(product)), 0)) + ' CLP. El descuento aplica a cursos individuales.',
+      ] : []),
       '¿Me pueden confirmar el total y los pasos para pagar y activar el acceso?',
     ].join('\n');
     const link = new URL('https://wa.me/' + contact);
@@ -110,6 +118,15 @@
     byId('cart-nav-count').textContent = String(order.length);
     document.querySelector('.store-cart-nav').setAttribute('aria-label', 'Ver carrito. Productos: ' + order.length);
     byId('cart-total').textContent = money(total) + ' CLP';
+    const eligible = order.some(product => !product.isPack);
+    byId('cart-student-option').hidden = !eligible;
+    if (!eligible) student.checked = false;
+    const estimate = byId('cart-student-estimate');
+    estimate.hidden = !student.checked;
+    if (student.checked) {
+      const discounted = order.reduce((sum, product) => sum + (product.isPack ? product.price : studentPrice(product)), 0);
+      estimate.textContent = 'Si se valida tu matrícula: ' + money(discounted) + ' CLP. Los packs mantienen su precio.';
+    }
     checkout.setAttribute('aria-disabled', String(!order.length));
     if (order.length) checkout.href = whatsappLink(order, total);
     else checkout.removeAttribute('href');
@@ -148,6 +165,7 @@
     }
     contact = data.whatsapp;
     months = data.access_months;
+    promotion = data.student_promotion;
     const valid = item => typeof item.id === 'string' && typeof item.name === 'string' &&
       Number.isSafeInteger(item.price) && item.price > 0;
     for (const course of data.courses.filter(valid)) {
@@ -183,6 +201,7 @@
   }
 
   byId('cart-title').tabIndex = -1;
+  student.addEventListener('change', render);
   document.querySelector('.store-more-packs')?.addEventListener('click', () => {
     byId('paquetes').open = true;
   });
