@@ -117,15 +117,18 @@
     byId('cart-count').textContent = '(' + order.length + ')';
     byId('cart-nav-count').textContent = String(order.length);
     document.querySelector('.store-cart-nav').setAttribute('aria-label', 'Ver carrito. Productos: ' + order.length);
-    byId('cart-total').textContent = money(total) + ' CLP';
     const eligible = order.some(product => !product.isPack);
     byId('cart-student-option').hidden = !eligible;
     if (!eligible) student.checked = false;
     const estimate = byId('cart-student-estimate');
+    const totalLabel = byId('cart-total-label');
+    totalLabel.textContent = student.checked ? 'Total con descuento*' : 'Total estimado';
+    byId('cart-total').textContent = money(total) + ' CLP';
     estimate.hidden = !student.checked;
     if (student.checked) {
       const discounted = order.reduce((sum, product) => sum + (product.isPack ? product.price : studentPrice(product)), 0);
-      estimate.textContent = 'Si se valida tu matrícula: ' + money(discounted) + ' CLP. Los packs mantienen su precio.';
+      byId('cart-total').textContent = money(discounted) + ' CLP';
+      estimate.textContent = 'Antes: ' + money(total) + ' CLP. Ahorras ' + money(total-discounted) + ' CLP. *Sujeto a validar matrícula. Los packs mantienen su precio.';
     }
     checkout.setAttribute('aria-disabled', String(!order.length));
     if (order.length) checkout.href = whatsappLink(order, total);
@@ -224,6 +227,15 @@
       try { selected = restore(localStorage.getItem(storageKey)); } catch {}
       activateButtons();
       render();
+      const url = new URL(location.href);
+      const requested = url.searchParams.get('agregar');
+      if (requested && products.has(requested)) {
+        url.searchParams.delete('agregar');
+        history.replaceState(null, '', url);
+        addProduct(requested);
+        panel.scrollIntoView({block:'start'});
+        panel.focus({preventScroll:true});
+      }
     })
     .catch(() => {
       announce('El carrito no pudo cargar los precios. Puedes consultar por WhatsApp desde cada curso.');
