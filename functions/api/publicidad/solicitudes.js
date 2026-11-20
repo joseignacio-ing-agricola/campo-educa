@@ -20,6 +20,8 @@ export async function onRequestPost({request,env}){
  if(company.length<2||company.length>100||name.length<2||name.length>100||email.length>180||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||phone.length>25||message.length>1500||!url||!quote||!placements.has(d.ubicacion)||d.consentimiento!==true)return json({error:'Revisa los datos ingresados.'},400);
  const ip=request.headers.get('CF-Connecting-IP')||'';
  if(!await turnstile(env,d.turnstileToken,ip))return json({error:'Completa la verificación de seguridad e inténtalo nuevamente.'},403);
+ let finalQuote=quote;
+ try{const plans=await db(env,'ads_plans?slug=eq.'+encodeURIComponent(d.plan)+'&select=price_30d_clp,active');if(!plans.length||!plans[0].active)return json({error:'Plan no disponible.'},400);const factors={7:.4,15:.65,30:1,90:2.7};finalQuote=Math.round(plans[0].price_30d_clp*factors[days]/10)*10;}catch{return json({error:'No se pudo confirmar la tarifa.'},502);}
  let creative_path=null;
  if(d.imagen){
   if(typeof d.imagen!=='object'||!types[d.imagen.tipo]||typeof d.imagen.base64!=='string'||d.imagen.base64.length>2800000)return json({error:'Imagen no admitida (máximo 2 MB).'},400);
@@ -31,7 +33,7 @@ export async function onRequestPost({request,env}){
   if(!upload.ok)return json({error:'No se pudo guardar la imagen. Inténtalo nuevamente.'},502);
  }
  try{
-  const rows=await db(env,'ads_requests?select=id',{method:'POST',prefer:'return=representation',body:{company,contact_name:name,email,phone,plan_slug:d.plan,duration_days:days,placement:d.ubicacion,destination_url:url,message,creative_path,quoted_price_clp:quote}});
+  const rows=await db(env,'ads_requests?select=id',{method:'POST',prefer:'return=representation',body:{company,contact_name:name,email,phone,plan_slug:d.plan,duration_days:days,placement:d.ubicacion,destination_url:url,message,creative_path,quoted_price_clp:finalQuote}});
   if(!Array.isArray(rows)||!rows[0]?.id)throw Error('INSERT_EMPTY');
   return json({id:rows[0].id,status:'pendiente'},201);
  }catch(e){return json({error:'No fue posible registrar la solicitud. Inténtalo más tarde.'},502);}
