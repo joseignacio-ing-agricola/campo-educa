@@ -33,6 +33,7 @@
 <div class="field sr"><label for="website">Dejar vacío</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
 <label class="check"><input id="privacidad" type="checkbox" required> Autorizo el tratamiento de estos datos exclusivamente para responder a mi solicitud comercial. *</label>
 <p class="fine">La contratación no se activa ni se cobra al enviar este formulario. Las tarifas son propuestas y se confirmarán por escrito.</p>
+<div id="turnstile-box" aria-label="Verificación de seguridad"></div>
 <div id="ad-status" class="status" role="status" aria-live="polite"></div>
 <button type="submit" class="btn" id="send" style="width:100%">Enviar solicitud →</button>
 </form>
@@ -50,7 +51,13 @@ form.creatividad.addEventListener('change',function(){if(imageUrl)URL.revokeObje
 function encode(file){return new Promise(function(resolve,reject){var reader=new FileReader();reader.onload=function(){resolve(String(reader.result).split(',')[1]);};reader.onerror=reject;reader.readAsDataURL(file);});}
 form.addEventListener('submit',async function(e){e.preventDefault();status.textContent='';if(!form.reportValidity())return;var url;try{url=new URL(form.url.value);if(url.protocol!=='https:')throw Error('HTTPS');}catch(_){status.textContent='Ingresa una dirección web HTTPS válida.';return;}var file=form.creatividad.files[0];if(file&&file.size>2*1024*1024){status.textContent='Imagen demasiado grande.';return;}
 var btn=document.getElementById('send');btn.disabled=true;status.textContent='Enviando solicitud...';
-try{var data={empresa:form.empresa.value.trim(),contacto:form.contacto.value.trim(),correo:form.correo.value.trim(),telefono:form.telefono.value.trim(),plan:form.plan.value,duracion:Number(form.duracion.value),ubicacion:form.ubicacion.value,url:url.href,mensaje:form.mensaje.value.trim(),website:form.website.value,consentimiento:form.privacidad.checked,imagen:file?{nombre:file.name,tipo:file.type,base64:await encode(file)}:null};var response=await fetch('/api/publicidad/solicitudes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});var result=await response.json().catch(function(){return{};});if(!response.ok)throw Error(result.error||'El sistema de recepción aún no está configurado.');status.textContent='Solicitud recibida. Número de referencia: '+result.id+'. Nos pondremos en contacto contigo.';form.reset();image.hidden=true;update();}catch(err){status.textContent=err.message+' Puedes solicitar información por WhatsApp desde la página principal.';}finally{btn.disabled=false;}});
+try{var data={empresa:form.empresa.value.trim(),contacto:form.contacto.value.trim(),correo:form.correo.value.trim(),telefono:form.telefono.value.trim(),plan:form.plan.value,duracion:Number(form.duracion.value),ubicacion:form.ubicacion.value,url:url.href,mensaje:form.mensaje.value.trim(),website:form.website.value,consentimiento:form.privacidad.checked,turnstileToken:(document.querySelector('[name="cf-turnstile-response"]')||{}).value||'',imagen:file?{nombre:file.name,tipo:file.type,base64:await encode(file)}:null};var response=await fetch('/api/publicidad/solicitudes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});var result=await response.json().catch(function(){return{};});if(!response.ok)throw Error(result.error||'El sistema de recepción aún no está configurado.');status.textContent='Solicitud recibida. Número de referencia: '+result.id+'. Nos pondremos en contacto contigo.';form.reset();image.hidden=true;update();}catch(err){status.textContent=err.message+' Puedes solicitar información por WhatsApp desde la página principal.';}finally{btn.disabled=false;}});
 update();
+fetch('/api/publicidad/config').then(r=>r.json()).then(function(c){
+ if(!c.enabled||!c.turnstileSiteKey){status.textContent='El sistema de solicitudes aún está en configuración. No se reciben contrataciones por esta vía.';return;}
+ var script=document.createElement('script');script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';script.async=true;
+ script.onload=function(){if(window.turnstile)window.turnstile.render('#turnstile-box',{sitekey:c.turnstileSiteKey});};
+ document.head.append(script);
+}).catch(function(){status.textContent='No se pudo verificar el estado del formulario.';});
 })();
 </script></body></html>
